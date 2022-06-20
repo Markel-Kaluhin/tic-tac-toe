@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+click = "~=8.1.0"
+prettytable = "*"
+terminalplot = "*"
+SQLAlchemy = "~=1.4.0"
+importlib-metadata = "*"
+typing-extensions = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.10"
