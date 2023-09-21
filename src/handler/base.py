@@ -1,23 +1,44 @@
-import click
-from typing import List, Optional, Callable
+from typing import Callable, List, Optional
 
-from src.handler import Handler
+import click
+
+from src.handler.model import Handler
 
 
 class BaseHandler:
+    """
+    Class responsible for creating and initializing the Application Menu.
+
+    Attributes:
+        current_handler (Handler): The current handler associated with the application menu.
+        routes (Handler): Hierarchical structure of handlers corresponding to the structure of the application menu.
+
+    Methods:
+        __init__(self, controllers_registry, routes):
+            Initializes a BaseHandler instance.
+        run(self, handler_list=None) -> None:
+            Initializes the application menu and handles transitions between screens.
+        __get_handler_index(self) -> int:
+            Gets the ordinal number of the menu item selected by the user.
+        __get_executor(self) -> Callable:
+            Gets the handler method based on the current handler's component and method.
+        __show_menu_labels_or_define_handler(self, handler_list: List[Handler]) -> None:
+            Displays menu labels or defines the handler based on the provided list of handlers.
+        __choose_menu_rendering_method(self) -> None:
+            Chooses the method for processing the request to display the next screen.
+
+    """
+
     current_handler: Handler
     routes: Handler
 
     def __init__(self, controllers_registry, routes):
         """
-        This class is responsible for creating and initializing the
-         Application Menu.
-        It handles both static menu items and dynamic ones, providing
-         the ability to work with data from the database also
+        Initializes a BaseHandler instance.
 
-        :param controllers_registry: Business Objects controller application entities
-        :param routes: Hierarchical structure of handlers corresponding to the
-         structure of the application menu
+        Args:
+            controllers_registry (Any): Business Objects controller application entities.
+            routes (Handler): Hierarchical structure of handlers corresponding to the structure of the application menu.
         """
         self.controllers_registry = controllers_registry
         self.routes = routes
@@ -25,10 +46,10 @@ class BaseHandler:
 
     def run(self, handler_list: List[Handler] = None) -> None:
         """
-        Here the application menu is initialized, transitions between screens
-         are carried out by means of recursion
+        Initializes the application menu and handles transitions between screens.
 
-        :param handler_list: List of handlers to display on the next screen
+        Args:
+            handler_list (List[Handler]): List of handlers to display on the next screen.
         """
         self.__show_menu_labels_or_define_handler(handler_list)
         menu_item = self.__get_handler_index()
@@ -37,8 +58,10 @@ class BaseHandler:
             self.current_handler = handler_list[menu_item]
             self.__choose_menu_rendering_method()
         except (IndexError, TypeError) as e:
-            print('''
-        Wrong choice, try again: ''')
+            print(
+                """
+        Wrong choice, try again: """
+            )
             # print('Debug: ', e)
             if self.current_handler.children:
                 self.run(self.current_handler.children)
@@ -69,20 +92,23 @@ class BaseHandler:
         """
         result = next(
             (
-                controller for controller in self.controllers_registry
-                if controller.__class__.__name__ == self.current_handler.component
+                controller
+                for controller in self.controllers_registry
+                if controller.__class__.__name__ == self.current_handler.component.__name__
             ),
-            None
+            None,
         )
         if result:
             result = result.__getattribute__(self.current_handler.method)
             if result:
                 return result
             else:
-                raise AttributeError(f'Method {self.current_handler.method}'
-                                     f' in Component {self.current_handler.component} does not exist')
+                raise AttributeError(
+                    f"Method {self.current_handler.method}"
+                    f" in Component {self.current_handler.component} does not exist"
+                )
         else:
-            raise AttributeError(f'Component {self.current_handler.component} does not exist')
+            raise AttributeError(f"Component {self.current_handler.component} does not exist")
 
     def __show_menu_labels_or_define_handler(self, handler_list: List[Handler]) -> None:
         """
@@ -96,8 +122,10 @@ class BaseHandler:
         """
         if handler_list and isinstance(handler_list, list):
             for handler in handler_list:
-                print(f'''
-        {handler.id} | {handler.name}''')
+                print(
+                    f"""
+        {handler.id} | {handler.name}"""
+                )
         elif self.current_handler.children:
             self.run(self.current_handler.children)
         else:
@@ -112,10 +140,7 @@ class BaseHandler:
         The basis of all this is the choice of the request method for the next
          handler.
         """
-        response = self.__get_executor()(
-            self.current_handler.parent,
-            **self.current_handler.kwargs
-        )
+        response = self.__get_executor()(self.current_handler.parent, **self.current_handler.kwargs)
         if response.dynamic_menu_items:
             self.run(response.dynamic_menu_items)
         elif response.parent:

@@ -2,7 +2,7 @@ Tic Tac Toe
 ===========
 _Designed by Markel Kalugin_
 
-Email: _markel.kalugin@gmail.com_
+Email: _markel.kaluhin@gmail.com_
 
 
 Description

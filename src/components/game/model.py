@@ -1,5 +1,5 @@
-from typing import List, Optional
 from dataclasses import dataclass, field
+from typing import List, Optional
 
 from src.database.model.user import User
 
@@ -7,11 +7,14 @@ from src.database.model.user import User
 @dataclass
 class Cell:
     """
-    Data model of system entity - Cell
-    Contains X and Y coordinates, as well as content, which is empty
-     by default, but will contain the user character as soon as the
-     user specified this field in the selection during the turn
+    Data model of the system entity - Cell.
+
+    Attributes:
+        x (int): X coordinate.
+        y (int): Y coordinate.
+        value (Optional[str]): Content of the cell (default: None).
     """
+
     x: int = field()
     y: int = field()
     value: Optional[str] = field(default=None)
@@ -20,65 +23,100 @@ class Cell:
 @dataclass
 class GameField:
     """
-    Data model of system entity - GameField
-    The game field data model is a field and methods for filling
-     the field with data, based on a user decision, as well as
-     counting winning combinations or a combination of playing a draw
+    Data model of the system entity - GameField.
+
+    Attributes:
+        game_metadata (List): List of game metadata.
+        _field (List[List[Cell]]): 2D list representing the game field (initialized later).
+
+    Methods:
+        __post_init__(self):
+            Initializes the GameField instance.
+        __get_cell(self, x, y):
+            Gets the value contained in the specified cell.
+        set_cell_value(self, x, y, value) -> Optional[User]:
+            Registers a custom decision on the game field.
+        __create_field():
+            Creates the game field.
+        show_field(self):
+            Renders the current state of the game field.
+        __show_cell(self, x, y):
+            Post-processes values for rendering.
+        __calculate_win_positions(self):
+            Entry point into the calculation of winning positions or positions of a draw.
+        __calculate_win_positions_by_rows(self, player):
+            Calculates winning positions horizontally.
+        __calculate_win_positions_by_columns(self, player):
+            Calculates winning positions vertically.
+        __calculate_win_positions_by_diagonals(self, player):
+            Calculates winning positions diagonally.
+        __calculate_draw_game(self):
+            Calculates draw positions.
     """
+
     game_metadata: List = field()
     _field: List[List[Cell]] = field(init=False)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
+        """
+        Initializes a GameField instance.
+        """
         self._field = self.__create_field()
 
-    def __get_cell(self, x, y):
+    def __get_cell(self, x: int, y: int) -> Cell:
         """
-        Used to get the value contained in the requested cell
+        Gets the value contained in the requested cell.
 
-        :param x: X coordinate
-        :param y: Y coordinate
-        :return: Returns the content of the requested cell
+        Args:
+            x (int): X coordinate.
+            y (int): Y coordinate.
+
+        Returns:
+            Cell: Returns the content of the requested cell.
         """
         return self._field[x][y]
 
-    def set_cell_value(self, x, y, value) -> Optional[User]:
+    def set_cell_value(self, x: int, y: int, value: str) -> Optional[User]:
         """
-        This method is used to register a custom decision on the game field
+        Registers a custom decision on the game field.
 
-        :param x: X coordinate
-        :param y: Y coordinate
-        :param value: The user's symbol is a unique identifier for his decision
-        :return: Returns the result of calculating winning positions
+        Args:
+            x (int): X coordinate.
+            y (int): Y coordinate.
+            value (str): The user's symbol.
+
+        Returns:
+            Optional[User]: Winner User object or None if played a draw.
         """
         cell = self.__get_cell(x, y)
-        result = None
         if not cell.value:
             self.__get_cell(x, y).value = value
             result = self.__calculate_win_positions()
         else:
-            raise ValueError('This cell is filled, please, choose another')
+            raise ValueError("This cell is filled, please, choose another")
         return result
 
     @staticmethod
-    def __create_field():
+    def __create_field() -> List[List[Cell]]:
         """
-        The game field is created here
+        Creates the game field.
 
-        :return: Game field
+        Returns:
+            List[List[Cell]]: Game field.
         """
+
         return [
             [Cell(x=0, y=0), Cell(x=0, y=1), Cell(x=0, y=2)],
             [Cell(x=1, y=0), Cell(x=1, y=1), Cell(x=1, y=2)],
-            [Cell(x=2, y=0), Cell(x=2, y=1), Cell(x=2, y=2)]
+            [Cell(x=2, y=0), Cell(x=2, y=1), Cell(x=2, y=2)],
         ]
 
-    def show_field(self):
+    def show_field(self) -> None:
         """
-        The method is used to rendering the current state of the game field
-
-        :return: None
+        Renders the current state of the game field.
         """
-        print(f'''
+        print(
+            f"""
         +-----+-----+-----+
         | {self.__show_cell(0, 0)} | {self.__show_cell(0, 1)} | {self.__show_cell(0, 2)} |
         +-----+-----+-----+
@@ -86,28 +124,32 @@ class GameField:
         +-----+-----+-----+
         | {self.__show_cell(2, 0)} | {self.__show_cell(2, 1)} | {self.__show_cell(2, 2)} |
         +-----+-----+-----+
-        ''')
-
-    def __show_cell(self, x, y):
         """
-        Required for post-processing values
+        )
 
-        :param x: X coordinate
-        :param y: Y coordinate
-        :return: A string with the value to be displayed when
-         rendering the game field
+    def __show_cell(self, x: int, y: int) -> str:
+        """
+        Post-processes values for rendering.
+
+        Args:
+            x (int): X coordinate.
+            y (int): Y coordinate.
+
+        Returns:
+            str: A string with the value to be displayed when rendering the game field.
         """
         cell = self.__get_cell(x, y)
         if cell.value:
-            return f' {cell.value} '
+            return f" {cell.value} "
         else:
-            return ','.join([str(x), str(y)])
+            return ",".join([str(x), str(y)])
 
-    def __calculate_win_positions(self):
+    def __calculate_win_positions(self) -> Optional[User]:
         """
-        Entry point into the calculation of winning positions or positions of a draw
+        Entry point into the calculation of winning positions or positions of a draw.
 
-        :return: Winner User object or False in played a draw
+        Returns:
+            Union[User, bool]: Winner User object or False if played a draw.
         """
         result = []
 
@@ -116,35 +158,43 @@ class GameField:
             result.append(self.__calculate_win_positions_by_columns(player=player))
             result.append(self.__calculate_win_positions_by_diagonals(player=player))
             if any(result):
-                print(f'''
-        {player.User.nickname} wins!''')
+                print(
+                    f"""
+        {player.User.nickname} wins!"""
+                )
                 return player.User
 
             if self.__calculate_draw_game():
-                print(f'''
-        Played a draw!''')
-                return False
+                print(
+                    f"""
+        Played a draw!"""
+                )
+                return None
 
-    def __calculate_win_positions_by_rows(self, player):
+    def __calculate_win_positions_by_rows(self, player: User) -> bool:
         """
-        Calculation of winning positions only horizontally
+        Calculates winning positions only horizontally.
 
-        :param player: Users are used only for getting the unique symbol
-         for understand that it was he who won
-        :return: Boolean with result of calculation winning positions
+        Args:
+            player: User representing a player.
+
+        Returns:
+            bool: Boolean with the result of the calculation of winning positions.
         """
         result = []
         for row in self._field:
             result.append(all([True if player.GameResult.symbol == cell.value else False for cell in row]))
         return any(result)
 
-    def __calculate_win_positions_by_columns(self, player):
+    def __calculate_win_positions_by_columns(self, player) -> bool:
         """
-        Calculation of winning positions only vertically
+        Calculates winning positions only vertically.
 
-        :param player: Users are used only for getting the unique symbol
-         for understand that it was he who won
-        :return: Boolean with result of calculation winning positions
+        Args:
+            player: User representing a player.
+
+        Returns:
+            bool: Boolean with the result of the calculation of winning positions.
         """
         result = []
         columns = []
@@ -154,13 +204,15 @@ class GameField:
             result.append(all([True if player.GameResult.symbol == cell.value else False for cell in column]))
         return any(result)
 
-    def __calculate_win_positions_by_diagonals(self, player):
+    def __calculate_win_positions_by_diagonals(self, player: User) -> bool:
         """
-        Calculation of winning positions only diagonally
+        Calculates winning positions only diagonally.
 
-        :param player: Users are used only for getting the unique symbol
-         for understand that it was he who won
-        :return: Boolean with result of calculation winning positions
+        Args:
+            player: User representing a player.
+
+        Returns:
+            bool: Boolean with the result of the calculation of winning positions.
         """
         result = []
         diagonal_1 = [[self._field[0][0], self._field[1][1], self._field[2][2]]]
@@ -173,9 +225,10 @@ class GameField:
 
     def __calculate_draw_game(self):
         """
-        Calculation of draw positions
+        Calculates draw positions.
 
-        :return: Boolean with result of calculation draw positions
+        Returns:
+            bool: Boolean with the result of the calculation of draw positions.
         """
         result = []
         for row in self._field:

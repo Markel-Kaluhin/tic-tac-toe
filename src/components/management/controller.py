@@ -1,111 +1,160 @@
-from src.database.model.user import User
-from src.handler import HandlerResponse
-from src.components.model import BaseController
+from mypy_extensions import KwArg
+from sqlalchemy.orm import Session
 
 from src.components.management.service import ManagementService
+from src.components.model import BaseController
+from src.database.model.user import User
+from src.handler.model import HandlerResponse, Handler
 
 
 class Management(BaseController):
-    def __init__(self, db_session):
+    """
+    Controller class for managing user data and functionalities.
+
+    Attributes:
+        db_session (Any): The database session.
+        service (ManagementService): An instance of the ManagementService.
+
+    Methods:
+        __init__(self, db_session):
+            Initializes a Management instance.
+        player_details(self, handler, **kwargs):
+            Display detailed information of one user.
+        player_list(self, handler, **kwargs):
+            Display a list of users with an option to view detailed information.
+        player_create(self, handler, **kwargs):
+            Create a new user.
+        player_delete(self, handler, **kwargs):
+            Display a list of users with an option to delete a user.
+        player_delete_confirmation(self, handler, **kwargs):
+            Confirm deletion of a user.
+        new_league_season(self, handler, **kwargs):
+            Create a new league season.
+    """
+
+    def __init__(self, db_session: Session) -> None:
+        """
+        Initializes a Management instance.
+
+        Args:
+            db_session (Any): The database session.
+        """
+
         self.db_session = db_session
         self.service = ManagementService(self.db_session)
 
-    def player_details(self, handler, **kwargs):
+    def player_details(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:
         """
-        Detailed information of one user. All empty fields will be visible
-         as None
+        Display detailed information of one user.
 
-        :param handler: The handler from which this handler was called
-        :param kwargs: Specific parameters passed from the previous handler
-        :return: HandlerResponse object where stored the data to run the next
-            handlers or generated dynamic handlers
+        Args:
+            handler (Handler): The handler from which this handler was called.
+            kwargs (dict): Specific parameters passed from the previous handler.
+
+        Returns:
+            HandlerResponse: An object containing data to run the next handlers or generated dynamic handlers.
         """
 
-        user: User = kwargs['user']
+        user: User = kwargs["user"]
 
         self.service.show_player_details(user)
 
         return HandlerResponse()
 
-    def player_list(self, handler, **kwargs):
+    def player_list(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:
         """
-        A list of users in which you can select one to view detailed
-         information
+        Display a list of users with an option to view detailed information.
 
-        :param handler: The handler from which this handler was called
-        :param kwargs: Specific parameters passed from the previous handler
-        :return: HandlerResponse object where stored the data to run the next
-            handlers or generated dynamic handlers
+        Args:
+            handler (Handler): The handler from which this handler was called.
+            kwargs (dict): Specific parameters passed from the previous handler.
+
+        Returns:
+            HandlerResponse: An object containing data to run the next handlers or generated dynamic handlers.
         """
-        print('''
+        print(
+            """
         Choose one to see detail.
         Player table:
-        ''')
+        """
+        )
 
-        result = self.service.show_player_list(handler, 'Management', 'player_details')
+        result = self.service.show_player_list(handler, "Management", "player_details")
 
         return HandlerResponse(dynamic_menu_items=result)
 
-    def player_create(self, handler, **kwargs):
+    def player_create(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:
         """
-        This is where flow starts creating a user. If you do not enter
-         a nickname, it will be created automatically
+        Create a new user.
 
-        :param handler: The handler from which this handler was called
-        :param kwargs: Specific parameters passed from the previous handler
-        :return: HandlerResponse object where stored the data to run the next
-            handlers or generated dynamic handlers
+        Args:
+            handler (Handler): The handler from which this handler was called.
+            kwargs (dict): Specific parameters passed from the previous handler.
+
+        Returns:
+            HandlerResponse: An object containing data to run the next handlers or generated dynamic handlers.
         """
 
         self.service.player_create()
 
         return HandlerResponse()
 
-    def player_delete(self, handler, **kwargs):
+    def player_delete(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:
         """
-        A list of users in which you can select one to delete
+        Display a list of users with an option to delete a user.
 
-        :param handler: The handler from which this handler was called
-        :param kwargs: Specific parameters passed from the previous handler
-        :return: HandlerResponse object where stored the data to run the next
-            handlers or generated dynamic handlers
+        Args:
+            handler (Handler): The handler from which this handler was called.
+            kwargs (dict): Specific parameters passed from the previous handler.
+
+        Returns:
+            HandlerResponse: An object containing data to run the next handlers or generated dynamic handlers.
         """
-        print('''
+        print(
+            """
         Choose one to delete.
         Player list:
-        ''')
+        """
+        )
 
-        result = self.service.show_player_list(handler, 'Management', 'player_delete_confirmation')
+        result = self.service.show_player_list(
+            handler,
+            "Management",
+            "player_delete_confirmation"
+        )
 
         return HandlerResponse(dynamic_menu_items=result)
 
-    def player_delete_confirmation(self, handler, **kwargs):
+    def player_delete_confirmation(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:
         """
-        Sometimes the finger can flinch, it is better to ask again before
-         deleting the user
+        Confirm deletion of a user.
 
-        :param handler: The handler from which this handler was called
-        :param kwargs: Specific parameters passed from the previous handler
-        :return: HandlerResponse object where stored the data to run the next
-            handlers or generated dynamic handlers
+        Args:
+            handler (Handler): The handler from which this handler was called.
+            kwargs (dict): Specific parameters passed from the previous handler.
+
+        Returns:
+            HandlerResponse: An object containing data to run the next handlers or generated dynamic handlers.
         """
-        user: User = kwargs['user']
+        user: User = kwargs["user"]
 
-        decision = input('Are you sure? y/N')
-        if decision == 'y':
+        decision = input("Are you sure? y/N")
+        if decision == "y":
             self.db_session.delete(user)
             self.db_session.commit()
-            print(f'User {user.nickname} was deleted')
+            print(f"User {user.nickname} was deleted")
         return HandlerResponse()
 
-    def new_league_season(self, handler, **kwargs):
+    def new_league_season(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:
         """
-        A new season is created here.
+        Create a new league season.
 
-        :param handler: The handler from which this handler was called
-        :param kwargs: Specific parameters passed from the previous handler
-        :return: HandlerResponse object where stored the data to run the next
-            handlers or generated dynamic handlers
+        Args:
+            handler (Handler): The handler from which this handler was called.
+            kwargs (dict): Specific parameters passed from the previous handler.
+
+        Returns:
+            HandlerResponse: An object containing data to run the next handlers or generated dynamic handlers.
         """
 
         self.service.create_new_league_season()

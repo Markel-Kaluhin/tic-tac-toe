@@ -1,87 +1,137 @@
-from src.handler import HandlerResponse
-from src.components.model import BaseController
-from src.database import delete_session
+from mypy_extensions import KwArg
+from sqlalchemy.orm import Session
 
 from src.components.main_menu.service import MainMenuService
+from src.components.model import BaseController
+from src.database import delete_session
+from src.handler.model import HandlerResponse, Handler
 
 
 class MainMenu(BaseController):
-    def __init__(self, db_session):
+    """
+    Controller for the main menu functionalities.
+
+    Attributes:
+        db_session (Any): The database session.
+        service (MainMenuService): Instance of the MainMenuService.
+
+    Methods:
+        __init__(self, db_session):
+            Initializes a MainMenu instance.
+        welcome(self, handler, **kwargs):
+            Welcome window, shown when the application is initialized.
+        management(self, handler, **kwargs):
+            Navigate to the management menu.
+        player_statistic(self, handler, **kwargs):
+            Show statistics of past games.
+        ranking_table(self, handler, **kwargs):
+            Show the ranking table.
+        exit_game(self, handler, **kwargs):
+            Exit the game.
+    """
+
+    def __init__(self, db_session: Session) -> None:
+        """
+        Initializes a MainMenu instance.
+
+        Args:
+            db_session (Any): The database session.
+        """
+
         self.db_session = db_session
         self.service = MainMenuService(self.db_session)
 
-    def welcome(self, handler, **kwargs):
+    def welcome(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:
         """
-        Welcome window, shown when the application is initialized
+        Welcome window, shown when the application is initialized.
 
-        :param handler: The handler from which this handler was called
-        :param kwargs: Specific parameters passed from the previous handler
-        :return: HandlerResponse object where stored the data to run the next
-            handlers or generated dynamic handlers
+        Args:
+            handler: The handler from which this handler was called.
+            kwargs: Specific parameters passed from the previous handler.
+
+        Returns:
+            HandlerResponse: Object with stored data to run the next handlers or generated dynamic handlers.
         """
-        print('''
+        print(
+            """
         Greeting player. Choose the option:
-        ''')
+        """
+        )
         return HandlerResponse()
 
-    def management(self, handler, **kwargs):
+    def management(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:
         """
-        This handler is needed to go to the management menu
+        Navigate to the management menu.
 
-        :param handler: The handler from which this handler was called
-        :param kwargs: Specific parameters passed from the previous handler
-        :return: HandlerResponse object where stored the data to run the next
-            handlers or generated dynamic handlers
+        Args:
+            handler: The handler from which this handler was called.
+            kwargs: Specific parameters passed from the previous handler.
+
+        Returns:
+            HandlerResponse: Object with stored data to run the next handlers or generated dynamic handlers.
         """
-        print('''
+        print(
+            """
         Management section. Choose the option:
-        ''')
+        """
+        )
         return HandlerResponse()
 
-    def player_statistic(self, handler, **kwargs):
+    def player_statistic(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:
         """
-        To show statistics of past games, who is against whom and who won
+        Show statistics of past games.
 
-        :param handler: The handler from which this handler was called
-        :param kwargs: Specific parameters passed from the previous handler
-        :return: HandlerResponse object where stored the data to run the next
-            handlers or generated dynamic handlers
+        Args:
+            handler: The handler from which this handler was called.
+            kwargs: Specific parameters passed from the previous handler.
+
+        Returns:
+            HandlerResponse: Object with stored data to run the next handlers or generated dynamic handlers.
         """
-        print('''
+        print(
+            """
         Past games statistics:
-        ''')
+        """
+        )
         self.service.show_past_games_statistic()
 
         return HandlerResponse()
 
-    def ranking_table(self, handler, **kwargs):
+    def ranking_table(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:
         """
-        Used to call the ranking table
+        Show the ranking table.
 
-        :param handler: The handler from which this handler was called
-        :param kwargs: Specific parameters passed from the previous handler
-        :return: HandlerResponse object where stored the data to run the next
-            handlers or generated dynamic handlers
+        Args:
+            handler: The handler from which this handler was called.
+            kwargs: Specific parameters passed from the previous handler.
+
+        Returns:
+            HandlerResponse: Object with stored data to run the next handlers or generated dynamic handlers.
         """
-        print('''
+        print(
+            """
         Ranking table:
-        ''')
+        """
+        )
         self.service.show_ranking_table()
 
         return HandlerResponse()
 
-    def exit_game(self, handler, **kwargs):
+    def exit_game(self, handler: Handler, **kwargs: KwArg) -> None:
         """
-        Pretty obvious, but with this point you are leaving the game
+        Exit the game.
 
-        :param handler: The handler from which this handler was called
-        :param kwargs: Specific parameters passed from the previous handler
-        :return: HandlerResponse object where stored the data to run the next
-            handlers or generated dynamic handlers
+        Args:
+            handler: The handler from which this handler was called.
+            kwargs: Specific parameters passed from the previous handler.
+
+        Returns:
+            HandlerResponse: Object with stored data to run the next handlers or generated dynamic handlers.
         """
-        print('''
+        print(
+            """
         Bue, see you next time!
-        ''')
+        """
+        )
         delete_session(self.db_session)
         exit(0)
-        return HandlerResponse()
