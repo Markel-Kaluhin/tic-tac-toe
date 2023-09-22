@@ -1,7 +1,23 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
 
+from src.database.model.game import Game, GameResult, LeagueSeason
 from src.database.model.user import User
+
+
+class GameResultType:
+    GameResult: GameResult
+    User: User
+    Game: Game
+
+
+class PlayerType(GameResultType):
+    LeagueSeason: LeagueSeason
+
+
+class GameState:
+    is_end: bool = False
+    winner: Optional[User] = None
 
 
 @dataclass
@@ -54,7 +70,7 @@ class GameField:
             Calculates draw positions.
     """
 
-    game_metadata: List = field()
+    game_metadata: List = field(default_factory=list)
     _field: List[List[Cell]] = field(init=False)
 
     def __post_init__(self) -> None:
@@ -76,7 +92,7 @@ class GameField:
         """
         return self._field[x][y]
 
-    def set_cell_value(self, x: int, y: int, value: str) -> Optional[User]:
+    def set_cell_value(self, x: int, y: int, value: str) -> Optional[GameState]:
         """
         Registers a custom decision on the game field.
 
@@ -144,34 +160,40 @@ class GameField:
         else:
             return ",".join([str(x), str(y)])
 
-    def __calculate_win_positions(self) -> Optional[User]:
+    def __calculate_win_positions(self) -> GameState:
         """
         Entry point into the calculation of winning positions or positions of a draw.
 
         Returns:
             Union[User, bool]: Winner User object or False if played a draw.
         """
-        result = []
+        result = GameState()
+        game_state_result = []
 
         for player in self.game_metadata:
-            result.append(self.__calculate_win_positions_by_rows(player=player))
-            result.append(self.__calculate_win_positions_by_columns(player=player))
-            result.append(self.__calculate_win_positions_by_diagonals(player=player))
-            if any(result):
+            game_state_result.append(self.__calculate_win_positions_by_rows(player=player))
+            game_state_result.append(self.__calculate_win_positions_by_columns(player=player))
+            game_state_result.append(self.__calculate_win_positions_by_diagonals(player=player))
+            if any(game_state_result):
                 print(
                     f"""
         {player.User.nickname} wins!"""
                 )
-                return player.User
+                result.is_end = True
+                result.winner = player.User
+                break
 
             if self.__calculate_draw_game():
                 print(
                     f"""
         Played a draw!"""
                 )
-                return None
+                result.is_end = True
+                result.winner = None
+                break
+        return result
 
-    def __calculate_win_positions_by_rows(self, player: User) -> bool:
+    def __calculate_win_positions_by_rows(self, player: PlayerType) -> bool:
         """
         Calculates winning positions only horizontally.
 

@@ -1,9 +1,9 @@
-from sqlalchemy.orm import Session
 from mypy_extensions import KwArg
+from sqlalchemy.orm import Session
 
 from src.components.model import BaseController
 from src.components.utility.service import UtilityService
-from src.handler.model import HandlerResponse, Handler
+from src.handler.model import Handler, HandlerResponse
 
 
 class Utility(BaseController):

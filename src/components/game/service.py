@@ -4,7 +4,7 @@ from typing import List, Optional
 
 import click
 
-from src.components.game.model import GameField
+from src.components.game.model import GameField, GameState
 from src.components.management.service import ManagementService
 from src.database.model.game import Game, GameResult, GameUserDecision, LeagueSeason
 from src.database.model.user import User
@@ -20,7 +20,7 @@ class GameSession:
     Attributes:
         db_session: Session of connection to the database, through this object all interactions with the database occur
         symbols (List[str]): List of game symbols for players.
-        choosed_players (List[User]): List of chosen players for the current game.
+        chosen_players (List[Player]): List of chosen players for the current game.
         league (LeagueSeason): Current league.
         game_field (Optional[GameField]): GameField instance representing the game board.
         winner (Optional[User]): The winner of the game.
@@ -46,14 +46,15 @@ class GameSession:
         __save_user_decision(self, user, cell_item):
             Saves a user's game decision to the database.
         __summarise(self):
-            Summarizes the results of the game session.
+            Summarises the results of the game session.
     """
-    symbols: List[str]
-    choosed_players: List[User]
+
+    symbols: List[str] = ["x", "o"]
+    chosen_players: List[User] = []
     league: LeagueSeason
-    game_field: Optional[GameField]
-    winner: Optional[User]
-    game_metadata: Optional[List]
+    game_field: Optional[GameField] = None
+    game_state: GameState = GameState()
+    game_metadata: List = []
 
     def __init__(self, db_session, league):
         """
@@ -65,12 +66,12 @@ class GameSession:
             league: Current league.
         """
         self.db_session = db_session
-        self.symbols = ["x", "o"]
-        self.choosed_players = []
         self.league = league
-        self.game_field = None
-        self.winner = None
-        self.game_metadata = None
+
+    def start_game(self):
+        """
+        Start the game session.
+        """
         self.__choose_players()
         self.__create_game_session()
         self.__game_session(randint(0, 1))
@@ -82,17 +83,17 @@ class GameSession:
         """
         print(
             f"""
-        Choose the players. {REQUIRED_PLAYERS_NUMBER - len(self.choosed_players)} left:
+        Choose the players. {REQUIRED_PLAYERS_NUMBER - len(self.chosen_players)} left:
         """
         )
-        user_list = self.db_session.query(User).filter(User.id.notin_([i.id for i in self.choosed_players])).all()
+        user_list = self.db_session.query(User).filter(User.id.notin_([i.id for i in self.chosen_players])).all()
         for i, player in enumerate(user_list):
             print(i, player.nickname)
         user_item = input("Enter user id: ")
         if user_item.isdigit():
             user_item = int(user_item)
-            self.choosed_players.append(user_list[user_item])
-            if len(self.choosed_players) < REQUIRED_PLAYERS_NUMBER:
+            self.chosen_players.append(user_list[user_item])
+            if len(self.chosen_players) < REQUIRED_PLAYERS_NUMBER:
                 self.__choose_players()
         else:
             print(
@@ -131,7 +132,7 @@ class GameSession:
             game_id: Game object identifier.
         """
         self.db_session.add_all(
-            [GameResult(game_id=game_id, user_id=user.id, symbol=self.__get_symbol()) for user in self.choosed_players]
+            [GameResult(game_id=game_id, user_id=user.id, symbol=self.__get_symbol()) for user in self.chosen_players]
         )
         self.db_session.commit()
 
@@ -158,7 +159,6 @@ class GameSession:
         Returns:
             str: Random symbol.
         """
-        result = None
         if len(self.symbols) > 1:
             symbol_index = randint(0, 1)
             result = self.symbols.pop(symbol_index)
@@ -175,7 +175,7 @@ class GameSession:
             wrong_choice (bool, optional): A specific parameter required to pass the state of an invalid choice in
              the last call to this method. Defaults to False.
         """
-        user = self.choosed_players[next_player]
+        user = self.chosen_players[next_player]
         click.clear()
         print(
             """
@@ -190,7 +190,7 @@ class GameSession:
         if re.search(r"[0-2],[0-2]", cell_item):
             cell_item = [int(i) for i in cell_item.split(",")]
             try:
-                self.winner = self.game_field.set_cell_value(
+                self.game_state = self.game_field.set_cell_value(
                     x=cell_item[0],
                     y=cell_item[1],
                     value=next(i.GameResult.symbol for i in self.game_metadata if i.User.id == user.id),
@@ -199,15 +199,10 @@ class GameSession:
             except ValueError as e:
                 print(e)
                 self.__game_session(next_player)
-            if self.winner:
-                self.game_field.show_field()
-                return
-            elif self.winner is None:
-                self.game_field.show_field()
-                return
-            else:
-                next_player = 0 if next_player == 1 else 1
-                self.__game_session(next_player)
+            if self.game_state.is_end is True:
+                return self.game_state
+            next_player = 0 if next_player == 1 else 1
+            self.__game_session(next_player)
         else:
             self.__game_session(next_player, wrong_choice=True)
 
@@ -233,7 +228,7 @@ class GameSession:
         Summarizes the results of the game session.
         """
         for i in self.game_metadata:
-            i.GameResult.is_winner = True if i.User == self.winner else False
+            i.GameResult.is_winner = True if i.User == self.game_state.winner else False
             self.db_session.add(i.GameResult)
         self.db_session.commit()
 
@@ -275,7 +270,8 @@ class GameService:
         """
         league = self.__check_exists_league()
         self.__check_players_number()
-        GameSession(self.db_session, league)
+        game_session = GameSession(self.db_session, league)
+        game_session.start_game()
 
     def __check_exists_league(self):
         """

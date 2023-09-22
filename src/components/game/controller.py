@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from src.components.game.service import GameService
 from src.components.model import BaseController
-from src.handler.model import HandlerResponse, Handler
+from src.handler.model import Handler, HandlerResponse
 
 
 class Game(BaseController):

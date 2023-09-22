@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from src.components.management.service import ManagementService
 from src.components.model import BaseController
 from src.database.model.user import User
-from src.handler.model import HandlerResponse, Handler
+from src.handler.model import Handler, HandlerResponse
 
 
 class Management(BaseController):
@@ -117,11 +117,7 @@ class Management(BaseController):
         """
         )
 
-        result = self.service.show_player_list(
-            handler,
-            "Management",
-            "player_delete_confirmation"
-        )
+        result = self.service.show_player_list(handler, "Management", "player_delete_confirmation")
 
         return HandlerResponse(dynamic_menu_items=result)
 

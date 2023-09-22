@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from src.components.main_menu.service import MainMenuService
 from src.components.model import BaseController
 from src.database import delete_session
-from src.handler.model import HandlerResponse, Handler
+from src.handler.model import Handler, HandlerResponse
 
 
 class MainMenu(BaseController):

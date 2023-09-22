@@ -1,8 +1,9 @@
-from typing import Optional, List
+from typing import List, Optional, Tuple
 
 from prettytable import PrettyTable
 from sqlalchemy.orm import Session
 
+from src.components.game.model import GameResultType
 from src.database.model.game import Game, GameResult, LeagueSeason
 from src.database.model.user import User
 
@@ -122,7 +123,7 @@ class MainMenuService:
         You don't have any league season. Create it and play some games before statistic will appear"""
             )
 
-    def __get_game_result_list(self, last_league_season: LeagueSeason) -> List[LeagueSeason]:
+    def __get_game_result_list(self, last_league_season: LeagueSeason) -> List[GameResultType]:
         """
         Get the results of games in the last league season.
 
