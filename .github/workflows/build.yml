@@ -28,7 +28,7 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install pipenv setuptools
         python -m pip install --upgrade pipenv
-        pipenv install --system --deploy
+        pipenv install --system --deploy --dev
     # - name: Lint all set of linters
     #   run: |
     #     pipenv run lint
