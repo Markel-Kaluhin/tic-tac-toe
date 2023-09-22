@@ -35,6 +35,20 @@ jobs:
     - name: Test with pytest
       run: |
         pipenv run unit
+        pipenv run coverage_json
     - name: Count coverage
       run: |
-        echo ${$(pipenv run coverage | grep TOTAL): -1}
+        echo "COVERAGE=$(pipenv run coverage | awk '$1 == "TOTAL" {print $NF+0}')" >> $GITHUB_ENV
+    - name: Create Coverage Badge
+      uses: schneegans/dynamic-badges-action@v1.6.0
+      with:
+        auth: ${{ secrets.GIST_SECRET }}
+        gistID: e8d23650144c1dd611a941789d52721a
+        filename: coverage.json
+        label: Test Coverage
+        message: ${{ env.COVERAGE }}
+        namedLogo: pytest
+        logoColor: lightblue
+        valColorRange: ${{ env.COVERAGE }}
+        maxColorRange: 100
+        minColorRange: 50
