@@ -60,7 +60,7 @@ jobs:
         gistID: e8d23650144c1dd611a941789d52721a
         filename: tic-tac-toe__tests_passed.json
         label: Tests
-        message: ${{ env.TESTS_PASSED && "PASSED" || "FAILED" }}
+        message: ${{ env.TESTS_PASSED && 'PASSED' || 'FAILED' }}
         namedLogo: pytest
         logoColor: lightblue
         valColorRange: ${{ env.TESTS_PASSED && 100 || 0 }}
