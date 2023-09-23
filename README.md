@@ -1,4 +1,5 @@
-![Coverage Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Markel-Kaluhin/e8d23650144c1dd611a941789d52721a/raw/tic-tac-toe__develop.json)
+![Tests Pass Badge](https://img.shields.io/endpoint?url=https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Markel-Kaluhin/e8d23650144c1dd611a941789d52721a/raw/tic-tac-toe__tests_passed.json)
+![Coverage Badge](https://img.shields.io/endpoint?url=https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Markel-Kaluhin/e8d23650144c1dd611a941789d52721a/raw/tic-tac-toe__coverage.json)
 
 Tic Tac Toe
 ===========
