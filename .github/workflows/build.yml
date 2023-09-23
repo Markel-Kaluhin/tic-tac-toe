@@ -44,7 +44,7 @@ jobs:
       with:
         auth: ${{ secrets.GIST_SECRET }}
         gistID: e8d23650144c1dd611a941789d52721a
-        filename: coverage.json
+#        filename: coverage.json
         label: Test Coverage
         message: ${{ env.COVERAGE }}
         namedLogo: pytest
