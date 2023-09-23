@@ -1,4 +1,4 @@
-![Coverage Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Markel-Kaluhin/e8d23650144c1dd611a941789d52721a/raw/tic-tac-toe__pull_##.json)
+![Coverage Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Markel-Kaluhin/e8d23650144c1dd611a941789d52721a/raw/tic-tac-toe__develop.json)
 
 Tic Tac Toe
 ===========
