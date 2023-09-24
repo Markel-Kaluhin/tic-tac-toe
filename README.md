@@ -1,3 +1,4 @@
+[![Python application](https://github.com/Markel-Kaluhin/tic-tac-toe/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/Markel-Kaluhin/tic-tac-toe/actions/workflows/build.yml)
 ![Tests Pass Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Markel-Kaluhin/e8d23650144c1dd611a941789d52721a/raw/tic-tac-toe__tests_passed.json)
 ![Coverage Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Markel-Kaluhin/e8d23650144c1dd611a941789d52721a/raw/tic-tac-toe__coverage.json)
 
