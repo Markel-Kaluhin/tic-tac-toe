@@ -2,7 +2,7 @@
 ![Coverage Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Markel-Kaluhin/e8d23650144c1dd611a941789d52721a/raw/tic-tac-toe__coverage.json)
 
 # Tic Tac Toe
-*Designed by Markel Kalugin*
+*Designed by Markel Kaluhin*
 
 Email: [_markel.kaluhin@gmail.com_](mailto:markel.kaluhin@gmail.com)
 
