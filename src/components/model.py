@@ -1,5 +1,7 @@
 from abc import ABC  # pylint: disable=no-name-in-module
-from typing import List
+from typing import List, Optional, Type
+
+from sqlalchemy.orm import scoped_session
 
 
 class BaseController(ABC):
@@ -18,8 +20,9 @@ class BaseController(ABC):
     """
 
     __metadata: List = []
+    db_session: Optional[scoped_session] = None
 
-    def __init_subclass__(cls, db_session=None):
+    def __init_subclass__(cls, db_session: Optional[scoped_session] = None) -> None:
         """
         Adds the subclass to the metadata list and sets the database session.
 
@@ -27,15 +30,14 @@ class BaseController(ABC):
             db_session (Any): The database session.
 
         Returns:
-            cls (Type): The subclass of BaseController.
+            None
 
         """
         cls.db_session = db_session
         cls.__metadata.append(cls)
-        return cls
 
     @property
-    def metadata(self):
+    def metadata(self) -> List[Type]:
         """
         Gets the metadata list containing subclasses.
 

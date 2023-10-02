@@ -1,5 +1,6 @@
-from mypy_extensions import KwArg
-from sqlalchemy.orm import Session
+from typing import Dict
+
+from sqlalchemy.orm import scoped_session
 
 from src.components.management.service import ManagementService
 from src.components.model import BaseController
@@ -32,7 +33,7 @@ class Management(BaseController):
             Create a new league season.
     """
 
-    def __init__(self, db_session: Session) -> None:
+    def __init__(self, db_session: scoped_session) -> None:
         """
         Initializes a Management instance.
 
@@ -43,7 +44,9 @@ class Management(BaseController):
         self.db_session = db_session
         self.service = ManagementService(self.db_session)
 
-    def player_details(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:  # pylint: disable=unused-argument
+    def player_details(
+        self, handler: Handler, **kwargs: Dict[str, str]  # pylint: disable=unused-argument
+    ) -> HandlerResponse:
         """
         Display detailed information of one user.
 
@@ -55,13 +58,15 @@ class Management(BaseController):
             HandlerResponse: An object containing data to run the next handlers or generated dynamic handlers.
         """
 
-        user: User = kwargs["user"]
+        user: User = kwargs["user"]  # type: ignore [assignment]
 
         self.service.show_player_details(user)
 
         return HandlerResponse()
 
-    def player_list(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:  # pylint: disable=unused-argument
+    def player_list(
+        self, handler: Handler, **kwargs: Dict[str, str]  # pylint: disable=unused-argument
+    ) -> HandlerResponse:
         """
         Display a list of users with an option to view detailed information.
 
@@ -83,7 +88,9 @@ class Management(BaseController):
 
         return HandlerResponse(dynamic_menu_items=result)
 
-    def player_create(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:  # pylint: disable=unused-argument
+    def player_create(
+        self, handler: Handler, **kwargs: Dict[str, str]  # pylint: disable=unused-argument
+    ) -> HandlerResponse:
         """
         Create a new user.
 
@@ -99,7 +106,9 @@ class Management(BaseController):
 
         return HandlerResponse()
 
-    def player_delete(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:  # pylint: disable=unused-argument
+    def player_delete(
+        self, handler: Handler, **kwargs: Dict[str, str]  # pylint: disable=unused-argument
+    ) -> HandlerResponse:
         """
         Display a list of users with an option to delete a user.
 
@@ -122,7 +131,7 @@ class Management(BaseController):
         return HandlerResponse(dynamic_menu_items=result)
 
     def player_delete_confirmation(
-        self, handler: Handler, **kwargs: KwArg  # pylint: disable=unused-argument
+        self, handler: Handler, **kwargs: Dict[str, str]  # pylint: disable=unused-argument
     ) -> HandlerResponse:
         """
         Confirm deletion of a user.
@@ -134,7 +143,7 @@ class Management(BaseController):
         Returns:
             HandlerResponse: An object containing data to run the next handlers or generated dynamic handlers.
         """
-        user: User = kwargs["user"]
+        user: User = kwargs["user"]  # type: ignore [assignment]
 
         decision = input("Are you sure? y/N")
         if decision == "y":
@@ -144,7 +153,7 @@ class Management(BaseController):
         return HandlerResponse()
 
     def new_league_season(
-        self, handler: Handler, **kwargs: KwArg  # pylint: disable=unused-argument
+        self, handler: Handler, **kwargs: Dict[str, str]  # pylint: disable=unused-argument
     ) -> HandlerResponse:
         """
         Create a new league season.

@@ -1,6 +1,6 @@
 import sys
+from typing import Dict
 
-from mypy_extensions import KwArg
 from sqlalchemy.orm import Session
 
 from src.components.main_menu.service import MainMenuService
@@ -43,9 +43,9 @@ class MainMenu(BaseController):
         self.db_session = db_session
         self.service = MainMenuService(self.db_session)
 
-    def welcome(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:  # pylint: disable=unused-argument
+    def welcome(self, handler: Handler, **kwargs: Dict[str, str]) -> HandlerResponse:  # pylint: disable=unused-argument
         """
-        Welcome window, shown when the application is initialized.
+        Welcoming window, shown when the application is initialized.
 
         Args:
             handler: The handler from which this handler was called.
@@ -61,7 +61,9 @@ class MainMenu(BaseController):
         )
         return HandlerResponse()
 
-    def management(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:  # pylint: disable=unused-argument
+    def management(
+        self, handler: Handler, **kwargs: Dict[str, str]  # pylint: disable=unused-argument
+    ) -> HandlerResponse:
         """
         Navigate to the management menu.
 
@@ -79,7 +81,9 @@ class MainMenu(BaseController):
         )
         return HandlerResponse()
 
-    def player_statistic(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:  # pylint: disable=unused-argument
+    def player_statistic(
+        self, handler: Handler, **kwargs: Dict[str, str]  # pylint: disable=unused-argument
+    ) -> HandlerResponse:
         """
         Show statistics of past games.
 
@@ -99,7 +103,9 @@ class MainMenu(BaseController):
 
         return HandlerResponse()
 
-    def ranking_table(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:  # pylint: disable=unused-argument
+    def ranking_table(
+        self, handler: Handler, **kwargs: Dict[str, str]  # pylint: disable=unused-argument
+    ) -> HandlerResponse:
         """
         Show the ranking table.
 
@@ -119,7 +125,7 @@ class MainMenu(BaseController):
 
         return HandlerResponse()
 
-    def exit_game(self, handler: Handler, **kwargs: KwArg) -> None:  # pylint: disable=unused-argument
+    def exit_game(self, handler: Handler, **kwargs: Dict[str, str]) -> None:  # pylint: disable=unused-argument
         """
         Exit the game.
 

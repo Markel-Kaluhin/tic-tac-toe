@@ -1,7 +1,7 @@
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from prettytable import PrettyTable
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import scoped_session
 
 from src.components.game.model import GameResultType
 from src.database.model.game import Game, GameResult, LeagueSeason
@@ -28,12 +28,12 @@ class MainMenuService:
             Get the results of games in the last league season.
     """
 
-    def __init__(self, db_session: Session) -> None:
+    def __init__(self, db_session: scoped_session) -> None:
         """
         Initializes a MainMenuService instance.
 
         Args:
-            db_session (Session): The database session.
+            db_session (scoped_session): The database session.
         """
         self.db_session = db_session
 
@@ -53,7 +53,9 @@ class MainMenuService:
             f"""
         Statistic for the games from league season: {last_league_season.name}"""
         )
-        result = {i: {"players": [], "result": None} for i in {i.Game for i in game_result_list}}
+        result: Dict[Game, Dict[str, List[str] | str]] = {
+            i: {"players": [], "result": ""} for i in {i.Game for i in game_result_list}
+        }
         for game, _game_result in result.items():
             _game_result_list = [i for i in game_result_list if i.Game.id == game.id]
             _game_result["players"] = [i.User.nickname for i in _game_result_list]
@@ -64,7 +66,12 @@ class MainMenuService:
         table = PrettyTable()
         table.field_names = ["Players", "Result"]
         for game, _game_result in result.items():
-            table.add_row([" vs ".join(_game_result["players"]), _game_result["result"]])
+            table.add_row(
+                [
+                    " vs ".join(player for player in _game_result["players"] if player is not None),
+                    _game_result["result"],
+                ]
+            )
         print(table)
         print("\n")
 
@@ -112,7 +119,9 @@ class MainMenuService:
         Returns:
             LeagueSeason: LeagueSeason object from declarative data model.
         """
-        result = self.db_session.query(LeagueSeason).order_by(LeagueSeason.id.desc()).limit(1).one_or_none()
+        result: Optional[LeagueSeason] = (
+            self.db_session.query(LeagueSeason).order_by(LeagueSeason.id.desc()).limit(1).one_or_none()
+        )
 
         if result:
             return result
@@ -132,7 +141,7 @@ class MainMenuService:
         Returns:
             List: List of named tuples GameResult, User, Game objects from declarative data model.
         """
-        return (
+        result: List[GameResultType] = (
             self.db_session.query(GameResult, User, Game)
             .join(User, User.id == GameResult.user_id)
             .join(Game, Game.id == GameResult.game_id)
@@ -142,3 +151,4 @@ class MainMenuService:
             )
             .filter(LeagueSeason.id == last_league_season.id)
         )
+        return result

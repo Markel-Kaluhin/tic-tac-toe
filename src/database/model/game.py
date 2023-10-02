@@ -2,7 +2,7 @@ from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 
 from .base import Base
 
-metadata = Base.metadata  # pylint: disable=no-member
+metadata = Base.metadata  # type: ignore [attr-defined] # pylint: disable=no-member
 
 
 class GameResult(Base):

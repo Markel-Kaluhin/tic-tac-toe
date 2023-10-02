@@ -1,6 +1,10 @@
+from typing import List, Tuple
+
+from sqlalchemy.orm import scoped_session
 from terminalplot import plot
 
 from src.components.main_menu.service import MainMenuService
+from src.components.utility.controller import Utility
 from src.database.model.game import Game, GameResult, LeagueSeason
 from src.database.model.user import User
 from src.handler.model import Handler
@@ -29,7 +33,7 @@ class ManagementService:
             Create a new league season.
     """
 
-    def __init__(self, db_session):
+    def __init__(self, db_session: scoped_session) -> None:
         """
         Initializes a ManagementService instance.
 
@@ -39,7 +43,7 @@ class ManagementService:
         self.db_session = db_session
         self.main_menu_service = MainMenuService(self.db_session)
 
-    def show_player_list(self, handler, destination_component, destination_method):
+    def show_player_list(self, handler: Handler, destination_component: str, destination_method: str) -> List[Handler]:
         """
         Show a list of users before deletion and requesting detailed information about a user.
 
@@ -66,13 +70,13 @@ class ManagementService:
             )
             _handler.parent = handler
             result.append(_handler)
-        previous = Handler(id=last_menu_item + 1, name="Previous", component="Utility", method="previous_menu_item")
+        previous = Handler(id=last_menu_item + 1, name="Previous", component=Utility, method="previous_menu_item")
         previous.parent = handler
         result.append(previous)
 
         return result
 
-    def show_player_details(self, user) -> None:
+    def show_player_details(self, user: User) -> None:
         """
         Display detailed information about a user and related data.
 
@@ -111,7 +115,7 @@ class ManagementService:
             )
             plot(*growing_chart)
 
-    def __calculate_point_growing_chart(self, user):
+    def __calculate_point_growing_chart(self, user: User) -> Tuple[range, List[int]] | None:
         """
         Calculate the growth dynamics of a user's points for a chart.
 
@@ -126,7 +130,7 @@ class ManagementService:
             self.db_session.query(GameResult)
             .join(Game, Game.id == GameResult.game_id)
             .join(LeagueSeason, LeagueSeason.id == Game.league_season_id)
-            .filter(LeagueSeason.id == current_league.id)
+            .filter(LeagueSeason.id == current_league.id if current_league else None)
             .filter(GameResult.user_id == user.id)
             .order_by(GameResult.game_id.asc())
             .all()
@@ -142,7 +146,7 @@ class ManagementService:
             result = x_coordinate, y_coordinate
         return result
 
-    def __concat_user_detail(self, user):
+    def __concat_user_detail(self, user: User) -> str:
         """
         Concatenate user details based on available information.
 
@@ -190,7 +194,7 @@ class ManagementService:
                     """
         Field marked with * is required"""
                 )
-                for field in (i for i in user.__table__.c if i.name != "id"):  # pylint: disable=no-member
+                for field in (i for i in user.__table__.c if i.name != "id"):  # type: ignore [attr-defined] # pylint: disable=no-member
                     if getattr(user, field.name) is None:
                         label = "* " if not field.nullable else ""
                         label += field.name.capitalize().replace("_", " ")
@@ -223,7 +227,7 @@ class ManagementService:
             None
         """
         new_league_season_name = input("Enter new league season name: ")
-        league_season = LeagueSeason(name=new_league_season_name)
+        league_season = LeagueSeason(name=new_league_season_name)  # type: ignore [call-arg]
         self.db_session.add(league_season)
         self.db_session.commit()
         print(

@@ -1,8 +1,16 @@
-from typing import Callable, List, Optional
+from typing import Dict, List, Optional, Protocol, TypeVar
 
 import click
 
-from src.handler.model import Handler
+from src.components.model import BaseController
+from src.handler.model import Handler, HandlerResponse
+
+ConcreteController = TypeVar("ConcreteController", bound=BaseController)
+
+
+class Executor(Protocol):
+    def __call__(self, handler: Handler, **kwargs: Dict[str, str]) -> HandlerResponse:
+        ...
 
 
 class BaseHandler:
@@ -32,19 +40,19 @@ class BaseHandler:
     current_handler: Handler
     routes: Handler
 
-    def __init__(self, controllers_registry, routes):
+    def __init__(self, controllers_registry: List[ConcreteController], routes: Handler) -> None:
         """
         Initializes a BaseHandler instance.
 
         Args:
-            controllers_registry (Any): Business Objects controller application entities.
+            controllers_registry (List[ConcreteController]): Business Objects controller application entities.
             routes (Handler): Hierarchical structure of handlers corresponding to the structure of the application menu.
         """
         self.controllers_registry = controllers_registry
         self.routes = routes
         self.current_handler = self.routes
 
-    def run(self, handler_list: List[Handler] = None) -> None:
+    def run(self, handler_list: Optional[List[Handler]] = None) -> None:
         """
         Initializes the application menu and handles transitions between screens.
 
@@ -55,7 +63,8 @@ class BaseHandler:
         menu_item = self.__get_handler_index()
         try:
             click.clear()
-            self.current_handler = handler_list[menu_item]
+            if handler_list is not None and menu_item is not None:
+                self.current_handler = handler_list[menu_item]
             self.__choose_menu_rendering_method()
         except (IndexError, TypeError):
             print(
@@ -69,7 +78,7 @@ class BaseHandler:
                 self.run(self.current_handler.parent.children)
 
     @staticmethod
-    def __get_handler_index() -> int:
+    def __get_handler_index() -> Optional[int]:
         """
         Method for getting user decision
 
@@ -82,7 +91,7 @@ class BaseHandler:
             result = int(raw_menu_item)
         return result
 
-    def __get_executor(self) -> Callable:
+    def __get_executor(self) -> Executor:
         """
         This method is required to get a handler. In the first step, we get
          the controller from the registry, initialized controller objects,
@@ -99,15 +108,15 @@ class BaseHandler:
             None,
         )
         if result:
-            result = getattr(result, self.current_handler.method)
-            if result:
-                return result
+            executor: Optional[Executor] = getattr(result, self.current_handler.method)
+            if executor is not None:
+                return executor
             raise AttributeError(
                 f"Method {self.current_handler.method}  in Component {self.current_handler.component} does not exist"
             )
         raise AttributeError(f"Component {self.current_handler.component} does not exist")
 
-    def __show_menu_labels_or_define_handler(self, handler_list: List[Handler]) -> None:
+    def __show_menu_labels_or_define_handler(self, handler_list: Optional[List[Handler]]) -> None:
         """
         Every time we receive a new list of handlers, we need to
          display a list of its child handlers, if they are not there,

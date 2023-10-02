@@ -1,10 +1,12 @@
+from typing import Dict
+
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.pool import NullPool
 
 
-def make_engine(settings) -> Engine:
+def make_engine(settings: Dict[str, str]) -> Engine:
     connect_args = {
         # 'connect_timeout': 3
     }
@@ -22,10 +24,10 @@ def make_engine(settings) -> Engine:
     )
 
 
-def make_session(engine, **kwargs) -> scoped_session:
+def make_session(engine: Engine, **kwargs: Dict[str, str]) -> scoped_session:
     return scoped_session(sessionmaker(bind=engine, autoflush=False, **kwargs))
 
 
-def delete_session(db_session) -> None:
+def delete_session(db_session: scoped_session) -> None:
     db_session.close()
     db_session.remove()

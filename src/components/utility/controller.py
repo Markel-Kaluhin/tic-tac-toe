@@ -1,5 +1,6 @@
-from mypy_extensions import KwArg
-from sqlalchemy.orm import Session
+from typing import Dict
+
+from sqlalchemy.orm import scoped_session
 
 from src.components.model import BaseController
 from src.components.utility.service import UtilityService
@@ -22,7 +23,7 @@ class Utility(BaseController):
 
     """
 
-    def __init__(self, db_session: Session) -> None:
+    def __init__(self, db_session: scoped_session) -> None:
         """
         Initializes a Utility instance.
 
@@ -35,7 +36,9 @@ class Utility(BaseController):
         self.service = UtilityService()
 
     @staticmethod
-    def previous_menu_item(handler: Handler, **kwargs: KwArg) -> HandlerResponse:  # pylint: disable=unused-argument
+    def previous_menu_item(
+        handler: Handler, **kwargs: Dict[str, str]  # pylint: disable=unused-argument
+    ) -> HandlerResponse:
         """
         Returns the previous menu item.
 

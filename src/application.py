@@ -35,7 +35,7 @@ class Application:
     base_handler: BaseHandler
     base_controller: BaseController
 
-    def run(self):
+    def run(self) -> None:
         """
         Starts the application. Initializes the database connection and the routing.
 
@@ -46,7 +46,7 @@ class Application:
         self.__init_routing()
         self.base_handler.run()
 
-    def stop(self):
+    def stop(self) -> None:
         """
         Stops the application, disconnecting from external applications.
 
@@ -55,7 +55,7 @@ class Application:
         """
         delete_session(self.db_session)
 
-    def __init_database(self):
+    def __init_database(self) -> None:
         """
         Initializes the database connection engine and the database connection session.
 
@@ -65,7 +65,7 @@ class Application:
         self.db_engine = make_engine({"db_url": "sqlite:///src/database/db"})
         self.db_session = make_session(self.db_engine)
 
-    def __init_routing(self):
+    def __init_routing(self) -> None:
         """
         Initializes the base controller and specific controllers to create a list of objects with an active database
          session.

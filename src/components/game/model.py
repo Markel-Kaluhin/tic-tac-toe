@@ -219,7 +219,7 @@ class GameField:
             result.append(all(player.GameResult.symbol == cell.value for cell in row))
         return any(result)
 
-    def __calculate_win_positions_by_columns(self, player) -> bool:
+    def __calculate_win_positions_by_columns(self, player: PlayerType) -> bool:
         """
         Calculates winning positions only vertically.
 
@@ -231,13 +231,13 @@ class GameField:
         """
         result = []
         columns = []
-        for column in range(3):
-            columns.append([row[column] for row in self._field])
+        for column_number in range(3):
+            columns.append([row[column_number] for row in self._field])
         for column in columns:
             result.append(all(player.GameResult.symbol == cell.value for cell in column))
         return any(result)
 
-    def __calculate_win_positions_by_diagonals(self, player: User) -> bool:
+    def __calculate_win_positions_by_diagonals(self, player: PlayerType) -> bool:
         """
         Calculates winning positions only diagonally.
 
@@ -256,7 +256,7 @@ class GameField:
             result.append(all(player.GameResult.symbol == cell.value for cell in diagonal))
         return any(result)
 
-    def __calculate_draw_game(self):
+    def __calculate_draw_game(self) -> bool:
         """
         Calculates draw positions.
 

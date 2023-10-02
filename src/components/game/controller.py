@@ -1,4 +1,5 @@
-from mypy_extensions import KwArg
+from typing import Dict
+
 from sqlalchemy.orm import Session
 
 from src.components.game.service import GameService
@@ -32,7 +33,9 @@ class Game(BaseController):
         self.db_session = db_session
         self.service = GameService(self.db_session)
 
-    def start_game(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:  # pylint: disable=unused-argument
+    def start_game(
+        self, handler: Handler, **kwargs: Dict[str, str]  # pylint: disable=unused-argument
+    ) -> HandlerResponse:
         """
         Launches the game.
 

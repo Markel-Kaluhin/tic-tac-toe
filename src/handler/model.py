@@ -47,7 +47,7 @@ class Handler:
 
     name: str = field(repr=True)
     parent: "Handler" = field(init=False, repr=True)
-    component: type = field()
+    component: str = field()
     method: str = field()
     kwargs: Any = field(default_factory=dict)
 
