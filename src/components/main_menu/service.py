@@ -63,10 +63,8 @@ class MainMenuService:
 
         table = PrettyTable()
         table.field_names = ["Players", "Result"]
-        [
+        for game, _game_result in result.items():
             table.add_row([" vs ".join(_game_result["players"]), _game_result["result"]])
-            for game, _game_result in result.items()
-        ]
         print(table)
         print("\n")
 
@@ -100,13 +98,14 @@ class MainMenuService:
 
         table = PrettyTable()
         table.field_names = ["Nickname", "Total", "Win", "Loss", "Pts"]
-        [table.add_row([user.nickname, *user_measures.values()]) for user, user_measures in result.items()]
+        for user, user_measures in result.items():
+            table.add_row([user.nickname, *user_measures.values()])
         table.sortby = "Pts"
         table.reversesort = True
         print(table)
         print("\n")
 
-    def get_last_league_season(self) -> LeagueSeason:
+    def get_last_league_season(self) -> Optional[LeagueSeason]:
         """
         Get the last league season.
 
@@ -117,11 +116,11 @@ class MainMenuService:
 
         if result:
             return result
-        else:
-            print(
-                """
+        print(
+            """
         You don't have any league season. Create it and play some games before statistic will appear"""
-            )
+        )
+        return None
 
     def __get_game_result_list(self, last_league_season: LeagueSeason) -> List[GameResultType]:
         """

@@ -28,7 +28,7 @@ class Game(BaseController):
         Args:
             db_session (Any): The database session.
         """
-        super()
+        super().__init__()
         self.db_session = db_session
         self.service = GameService(self.db_session)
 

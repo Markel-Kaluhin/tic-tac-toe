@@ -39,11 +39,11 @@ class Management(BaseController):
         Args:
             db_session (Any): The database session.
         """
-
+        super().__init__()
         self.db_session = db_session
         self.service = ManagementService(self.db_session)
 
-    def player_details(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:
+    def player_details(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:  # pylint: disable=unused-argument
         """
         Display detailed information of one user.
 
@@ -61,7 +61,7 @@ class Management(BaseController):
 
         return HandlerResponse()
 
-    def player_list(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:
+    def player_list(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:  # pylint: disable=unused-argument
         """
         Display a list of users with an option to view detailed information.
 
@@ -83,7 +83,7 @@ class Management(BaseController):
 
         return HandlerResponse(dynamic_menu_items=result)
 
-    def player_create(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:
+    def player_create(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:  # pylint: disable=unused-argument
         """
         Create a new user.
 
@@ -99,7 +99,7 @@ class Management(BaseController):
 
         return HandlerResponse()
 
-    def player_delete(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:
+    def player_delete(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:  # pylint: disable=unused-argument
         """
         Display a list of users with an option to delete a user.
 
@@ -121,7 +121,9 @@ class Management(BaseController):
 
         return HandlerResponse(dynamic_menu_items=result)
 
-    def player_delete_confirmation(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:
+    def player_delete_confirmation(
+        self, handler: Handler, **kwargs: KwArg  # pylint: disable=unused-argument
+    ) -> HandlerResponse:
         """
         Confirm deletion of a user.
 
@@ -141,7 +143,9 @@ class Management(BaseController):
             print(f"User {user.nickname} was deleted")
         return HandlerResponse()
 
-    def new_league_season(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:
+    def new_league_season(
+        self, handler: Handler, **kwargs: KwArg  # pylint: disable=unused-argument
+    ) -> HandlerResponse:
         """
         Create a new league season.
 

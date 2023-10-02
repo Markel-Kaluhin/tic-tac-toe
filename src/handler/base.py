@@ -99,16 +99,13 @@ class BaseHandler:
             None,
         )
         if result:
-            result = result.__getattribute__(self.current_handler.method)
+            result = getattr(result, self.current_handler.method)
             if result:
                 return result
-            else:
-                raise AttributeError(
-                    f"Method {self.current_handler.method}"
-                    f" in Component {self.current_handler.component} does not exist"
-                )
-        else:
-            raise AttributeError(f"Component {self.current_handler.component} does not exist")
+            raise AttributeError(
+                f"Method {self.current_handler.method}  in Component {self.current_handler.component} does not exist"
+            )
+        raise AttributeError(f"Component {self.current_handler.component} does not exist")
 
     def __show_menu_labels_or_define_handler(self, handler_list: List[Handler]) -> None:
         """

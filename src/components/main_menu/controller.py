@@ -1,3 +1,5 @@
+import sys
+
 from mypy_extensions import KwArg
 from sqlalchemy.orm import Session
 
@@ -37,11 +39,11 @@ class MainMenu(BaseController):
         Args:
             db_session (Any): The database session.
         """
-
+        super().__init__()
         self.db_session = db_session
         self.service = MainMenuService(self.db_session)
 
-    def welcome(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:
+    def welcome(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:  # pylint: disable=unused-argument
         """
         Welcome window, shown when the application is initialized.
 
@@ -59,7 +61,7 @@ class MainMenu(BaseController):
         )
         return HandlerResponse()
 
-    def management(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:
+    def management(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:  # pylint: disable=unused-argument
         """
         Navigate to the management menu.
 
@@ -77,7 +79,7 @@ class MainMenu(BaseController):
         )
         return HandlerResponse()
 
-    def player_statistic(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:
+    def player_statistic(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:  # pylint: disable=unused-argument
         """
         Show statistics of past games.
 
@@ -97,7 +99,7 @@ class MainMenu(BaseController):
 
         return HandlerResponse()
 
-    def ranking_table(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:
+    def ranking_table(self, handler: Handler, **kwargs: KwArg) -> HandlerResponse:  # pylint: disable=unused-argument
         """
         Show the ranking table.
 
@@ -117,7 +119,7 @@ class MainMenu(BaseController):
 
         return HandlerResponse()
 
-    def exit_game(self, handler: Handler, **kwargs: KwArg) -> None:
+    def exit_game(self, handler: Handler, **kwargs: KwArg) -> None:  # pylint: disable=unused-argument
         """
         Exit the game.
 
@@ -134,4 +136,4 @@ class MainMenu(BaseController):
         """
         )
         delete_session(self.db_session)
-        exit(0)
+        sys.exit(0)

@@ -216,7 +216,7 @@ class GameField:
         """
         result = []
         for row in self._field:
-            result.append(all([True if player.GameResult.symbol == cell.value else False for cell in row]))
+            result.append(all(player.GameResult.symbol == cell.value for cell in row))
         return any(result)
 
     def __calculate_win_positions_by_columns(self, player) -> bool:
@@ -234,7 +234,7 @@ class GameField:
         for column in range(3):
             columns.append([row[column] for row in self._field])
         for column in columns:
-            result.append(all([True if player.GameResult.symbol == cell.value else False for cell in column]))
+            result.append(all(player.GameResult.symbol == cell.value for cell in column))
         return any(result)
 
     def __calculate_win_positions_by_diagonals(self, player: User) -> bool:
@@ -251,9 +251,9 @@ class GameField:
         diagonal_1 = [[self._field[0][0], self._field[1][1], self._field[2][2]]]
         diagonal_2 = [[self._field[2][0], self._field[1][1], self._field[0][2]]]
         for diagonal in diagonal_1:
-            result.append(all([True if player.GameResult.symbol == cell.value else False for cell in diagonal]))
+            result.append(all(player.GameResult.symbol == cell.value for cell in diagonal))
         for diagonal in diagonal_2:
-            result.append(all([True if player.GameResult.symbol == cell.value else False for cell in diagonal]))
+            result.append(all(player.GameResult.symbol == cell.value for cell in diagonal))
         return any(result)
 
     def __calculate_draw_game(self):
@@ -265,5 +265,5 @@ class GameField:
         """
         result = []
         for row in self._field:
-            result.append(all([True if cell.value else False for cell in row]))
+            result.append(all(cell.value is not None for cell in row))
         return all(result)

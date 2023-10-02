@@ -7,9 +7,9 @@ from alembic import context
 from model import Base
 from sqlalchemy import engine_from_config, pool
 
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-sys.path.insert(0, parentdir)
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))  # pylint: disable=no-member
+parentdir = os.path.dirname(currentdir)  # pylint: disable=no-member
+sys.path.insert(0, parentdir)  # pylint: disable=no-member
 
 
 # this is the Alembic Config object, which provides

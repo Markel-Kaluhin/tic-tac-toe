@@ -119,7 +119,7 @@ class ManagementService:
             user (User): User object from declarative data model.
 
         Returns:
-            Tuple: Lists of values in x, y coordinates.
+            Tuple: Lists of values in x, y_coordinate coordinates.
         """
         current_league = self.main_menu_service.get_last_league_season()
         game_results = (
@@ -133,13 +133,13 @@ class ManagementService:
         )
         result = None
         if game_results:
-            x = range(len(game_results))
-            y = []
+            x_coordinate = range(len(game_results))
+            y_coordinate = []
             points = 0
             for i in game_results:
                 points += 2 if i.is_winner else 1
-                y.append(points)
-            result = x, y
+                y_coordinate.append(points)
+            result = x_coordinate, y_coordinate
         return result
 
     def __concat_user_detail(self, user):
@@ -190,16 +190,16 @@ class ManagementService:
                     """
         Field marked with * is required"""
                 )
-                for field in (i for i in user.__table__.c if i.name != "id"):
-                    if user.__getattribute__(field.name) is None:
+                for field in (i for i in user.__table__.c if i.name != "id"):  # pylint: disable=no-member
+                    if getattr(user, field.name) is None:
                         label = "* " if not field.nullable else ""
                         label += field.name.capitalize().replace("_", " ")
                         label += ": "
                         setattr(user, field_name, "")
                         setattr(user, field.name, input(label))
-            except AssertionError as e:
-                print(e.args[0])
-                field_name = e.args[1]
+            except AssertionError as error:
+                print(error.args[0])
+                field_name = error.args[1]
             else:
                 self.db_session.add(user)
                 self.db_session.commit()

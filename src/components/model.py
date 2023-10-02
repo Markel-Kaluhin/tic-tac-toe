@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC  # pylint: disable=no-name-in-module
 from typing import List
 
 

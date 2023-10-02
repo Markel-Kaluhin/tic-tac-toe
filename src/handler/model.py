@@ -51,10 +51,10 @@ class Handler:
     method: str = field()
     kwargs: Any = field(default_factory=dict)
 
-    id: int = field(default=0)
+    id: int = field(default=0)  # pylint: disable=invalid-name
     children: List["Handler"] = field(default_factory=list)
 
-    def add_children(self, item: "Handler"):
+    def add_children(self, item: "Handler") -> None:
         """
         Add a child handler to this handler.
 

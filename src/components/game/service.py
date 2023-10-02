@@ -166,7 +166,7 @@ class GameSession:
             result = self.symbols[0]
         return result
 
-    def __game_session(self, next_player, wrong_choice=False):
+    def __game_session(self, next_player, wrong_choice=False) -> GameState:
         """
         Manages the main game session.
 
@@ -177,10 +177,11 @@ class GameSession:
         """
         user = self.chosen_players[next_player]
         click.clear()
-        print(
-            """
+        if wrong_choice is not None:
+            print(
+                """
         Wrong choice. Try again, please: """
-        ) if wrong_choice else None
+            )
         print(
             f"""
         {user.nickname} turn. Please, fill the cell: """
@@ -196,15 +197,14 @@ class GameSession:
                     value=next(i.GameResult.symbol for i in self.game_metadata if i.User.id == user.id),
                 )
                 self.__save_user_decision(user, cell_item)
-            except ValueError as e:
-                print(e)
-                self.__game_session(next_player)
+            except ValueError as error:
+                print(error)
+                return self.__game_session(next_player)
             if self.game_state.is_end is True:
                 return self.game_state
             next_player = 0 if next_player == 1 else 1
-            self.__game_session(next_player)
-        else:
-            self.__game_session(next_player, wrong_choice=True)
+            return self.__game_session(next_player)
+        return self.__game_session(next_player, wrong_choice=True)
 
     def __save_user_decision(self, user, cell_item):
         """
@@ -228,7 +228,7 @@ class GameSession:
         Summarizes the results of the game session.
         """
         for i in self.game_metadata:
-            i.GameResult.is_winner = True if i.User == self.game_state.winner else False
+            i.GameResult.is_winner = i.User == self.game_state.winner
             self.db_session.add(i.GameResult)
         self.db_session.commit()
 
@@ -284,13 +284,12 @@ class GameService:
 
         if result:
             return result
-        else:
-            print(
-                """
+        print(
+            """
         You don't have any league season. You need to create one before start the game"""
-            )
-            self.management_service.create_new_league_season()
-            return self.__check_exists_league()
+        )
+        self.management_service.create_new_league_season()
+        return self.__check_exists_league()
 
     def __check_players_number(self):
         """
@@ -303,10 +302,9 @@ class GameService:
 
         if len(result) >= REQUIRED_PLAYERS_NUMBER:
             return result
-        else:
-            print(
-                f"""
+        print(
+            f"""
         You don't have any players. You need to create {REQUIRED_PLAYERS_NUMBER - len(result)} at least"""
-            )
-            self.management_service.player_create()
-            self.__check_players_number()
+        )
+        self.management_service.player_create()
+        return self.__check_players_number()

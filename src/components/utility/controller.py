@@ -30,11 +30,12 @@ class Utility(BaseController):
             db_session (Any): The database session.
 
         """
+        super().__init__()
         self.db_session = db_session
         self.service = UtilityService()
 
     @staticmethod
-    def previous_menu_item(handler: Handler, **kwargs: KwArg) -> HandlerResponse:
+    def previous_menu_item(handler: Handler, **kwargs: KwArg) -> HandlerResponse:  # pylint: disable=unused-argument
         """
         Returns the previous menu item.
 

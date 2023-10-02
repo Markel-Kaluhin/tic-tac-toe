@@ -91,7 +91,7 @@ class TestGameSession(unittest.TestCase):
         self.game_session.game_field = GameField(game_metadata=self.game_session.game_metadata)
         self.game_session.chosen_players = [MagicMock(id=user_id) for user_id in user_ids]
         result = self.game_session._GameSession__game_session(next_player, wrong_choice)
-        mock_set_cell_value.assert_called_once_with(x=0, y=0, value="x")
+        mock_set_cell_value.assert_called_once_with(x_coordinate=0, y_coordinate=0, value="x")
         result.assert_not_called()
 
     def test_save_user_decision(self):
@@ -191,6 +191,7 @@ class TestGameService(unittest.TestCase):
             self.game_service._GameService__check_players_number()
 
         mock_print.assert_called_once_with(
-            f"\n        You don't have any players. You need to create {REQUIRED_PLAYERS_NUMBER - len(not_enough_players)} at least"
+            f"\n        You don't have any players. You need to create"
+            f" {REQUIRED_PLAYERS_NUMBER - len(not_enough_players)} at least"
         )
         self.db_session.query.assert_called()
