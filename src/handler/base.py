@@ -57,7 +57,7 @@ class BaseHandler:
             click.clear()
             self.current_handler = handler_list[menu_item]
             self.__choose_menu_rendering_method()
-        except (IndexError, TypeError) as e:
+        except (IndexError, TypeError):
             print(
                 """
         Wrong choice, try again: """

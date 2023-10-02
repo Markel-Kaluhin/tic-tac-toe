@@ -1,6 +1,7 @@
 [![Python application](https://github.com/Markel-Kaluhin/tic-tac-toe/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/Markel-Kaluhin/tic-tac-toe/actions/workflows/build.yml)
 ![Tests Pass Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Markel-Kaluhin/e8d23650144c1dd611a941789d52721a/raw/tic-tac-toe__tests_passed.json)
 ![Coverage Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Markel-Kaluhin/e8d23650144c1dd611a941789d52721a/raw/tic-tac-toe__coverage.json)
+![Linters Pass Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Markel-Kaluhin/e8d23650144c1dd611a941789d52721a/raw/tic-tac-toe__linters_passed.json)
 ![GitHub Pipenv locked Python version](https://img.shields.io/github/pipenv/locked/python-version/Markel-Kaluhin/tic-tac-toe)
 ![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)
 

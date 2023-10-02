@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
 from prettytable import PrettyTable
 from sqlalchemy.orm import Session

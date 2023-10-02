@@ -162,7 +162,7 @@ class TestGameService(unittest.TestCase):
 
         with patch("src.components.game.service.print") as mock_game_print:
             with patch("src.components.management.service.print") as mock_management_print:
-                result = self.game_service._GameService__check_exists_league()
+                _ = self.game_service._GameService__check_exists_league()
 
         mock_management_print.assert_called_once_with("\n        New league season Test League was created.")
         mock_game_print.assert_called_once_with(

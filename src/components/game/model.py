@@ -185,7 +185,7 @@ class GameField:
 
             if self.__calculate_draw_game():
                 print(
-                    f"""
+                    """
         Played a draw!"""
                 )
                 result.is_end = True
