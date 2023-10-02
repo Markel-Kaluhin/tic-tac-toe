@@ -22,7 +22,7 @@ repos:
     rev: v3.0.0a5
     hooks:
       - id: pylint
-#        exclude: tests/fixtures/
+        exclude: tests/|src/database/migrations/
   - repo: https://github.com/psf/black
     rev: 23.9.1
     hooks:
@@ -31,4 +31,4 @@ repos:
     rev: v1.5.1
     hooks:
       - id: mypy
-        exclude: ^(migrations/versions|tests/fixtures|settings)
+        exclude: tests/|src/database/migrations/
