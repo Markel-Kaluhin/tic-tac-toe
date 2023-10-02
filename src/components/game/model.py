@@ -26,13 +26,13 @@ class Cell:
     Data model of the system entity - Cell.
 
     Attributes:
-        x (int): X coordinate.
-        y (int): Y coordinate.
+        x_coordinate (int): X coordinate.
+        y_coordinate (int): Y coordinate.
         value (Optional[str]): Content of the cell (default: None).
     """
 
-    x: int = field()
-    y: int = field()
+    x_coordinate: int = field()
+    y_coordinate: int = field()
     value: Optional[str] = field(default=None)
 
 
@@ -79,34 +79,34 @@ class GameField:
         """
         self._field = self.__create_field()
 
-    def __get_cell(self, x: int, y: int) -> Cell:
+    def __get_cell(self, x_coordinate: int, y_coordinate: int) -> Cell:
         """
         Gets the value contained in the requested cell.
 
         Args:
-            x (int): X coordinate.
-            y (int): Y coordinate.
+            x_coordinate (int): X coordinate.
+            y_coordinate (int): Y coordinate.
 
         Returns:
             Cell: Returns the content of the requested cell.
         """
-        return self._field[x][y]
+        return self._field[x_coordinate][y_coordinate]
 
-    def set_cell_value(self, x: int, y: int, value: str) -> Optional[GameState]:
+    def set_cell_value(self, x_coordinate: int, y_coordinate: int, value: str) -> Optional[GameState]:
         """
         Registers a custom decision on the game field.
 
         Args:
-            x (int): X coordinate.
-            y (int): Y coordinate.
+            x_coordinate (int): X coordinate.
+            y_coordinate (int): Y coordinate.
             value (str): The user's symbol.
 
         Returns:
             Optional[User]: Winner User object or None if played a draw.
         """
-        cell = self.__get_cell(x, y)
+        cell = self.__get_cell(x_coordinate, y_coordinate)
         if not cell.value:
-            self.__get_cell(x, y).value = value
+            self.__get_cell(x_coordinate, y_coordinate).value = value
             result = self.__calculate_win_positions()
         else:
             raise ValueError("This cell is filled, please, choose another")
@@ -122,9 +122,21 @@ class GameField:
         """
 
         return [
-            [Cell(x=0, y=0), Cell(x=0, y=1), Cell(x=0, y=2)],
-            [Cell(x=1, y=0), Cell(x=1, y=1), Cell(x=1, y=2)],
-            [Cell(x=2, y=0), Cell(x=2, y=1), Cell(x=2, y=2)],
+            [
+                Cell(x_coordinate=0, y_coordinate=0),
+                Cell(x_coordinate=0, y_coordinate=1),
+                Cell(x_coordinate=0, y_coordinate=2),
+            ],
+            [
+                Cell(x_coordinate=1, y_coordinate=0),
+                Cell(x_coordinate=1, y_coordinate=1),
+                Cell(x_coordinate=1, y_coordinate=2),
+            ],
+            [
+                Cell(x_coordinate=2, y_coordinate=0),
+                Cell(x_coordinate=2, y_coordinate=1),
+                Cell(x_coordinate=2, y_coordinate=2),
+            ],
         ]
 
     def show_field(self) -> None:
@@ -143,22 +155,21 @@ class GameField:
         """
         )
 
-    def __show_cell(self, x: int, y: int) -> str:
+    def __show_cell(self, x_coordinate: int, y_coordinate: int) -> str:
         """
         Post-processes values for rendering.
 
         Args:
-            x (int): X coordinate.
-            y (int): Y coordinate.
+            x_coordinate (int): X coordinate.
+            y_coordinate (int): Y coordinate.
 
         Returns:
             str: A string with the value to be displayed when rendering the game field.
         """
-        cell = self.__get_cell(x, y)
+        cell = self.__get_cell(x_coordinate, y_coordinate)
         if cell.value:
             return f" {cell.value} "
-        else:
-            return ",".join([str(x), str(y)])
+        return ",".join([str(x_coordinate), str(y_coordinate)])
 
     def __calculate_win_positions(self) -> GameState:
         """

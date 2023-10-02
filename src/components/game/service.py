@@ -191,8 +191,8 @@ class GameSession:
             cell_item = [int(i) for i in cell_item.split(",")]
             try:
                 self.game_state = self.game_field.set_cell_value(
-                    x=cell_item[0],
-                    y=cell_item[1],
+                    x_coordinate=cell_item[0],
+                    y_coordinate=cell_item[1],
                     value=next(i.GameResult.symbol for i in self.game_metadata if i.User.id == user.id),
                 )
                 self.__save_user_decision(user, cell_item)
