@@ -1,9 +1,10 @@
-from typing import List, Tuple
+from typing import List, Tuple, Type
 
 from sqlalchemy.orm import scoped_session
 from terminalplot import plot
 
 from src.components.main_menu.service import MainMenuService
+from src.components.model import BaseController
 from src.components.utility.controller import Utility
 from src.database.model.game import Game, GameResult, LeagueSeason
 from src.database.model.user import User
@@ -43,13 +44,15 @@ class ManagementService:
         self.db_session = db_session
         self.main_menu_service = MainMenuService(self.db_session)
 
-    def show_player_list(self, handler: Handler, destination_component: str, destination_method: str) -> List[Handler]:
+    def show_player_list(
+        self, handler: Handler, destination_component: Type[BaseController], destination_method: str
+    ) -> List[Handler]:
         """
         Show a list of users before deletion and requesting detailed information about a user.
 
         Args:
             handler (Handler): The handler from which this handler was called.
-            destination_component (str): Name of the component to get the route.
+            destination_component (ConcreteController): Name of the component to get the route.
             destination_method (str): Name of the component's method to get the route.
 
         Returns:

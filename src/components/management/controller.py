@@ -13,7 +13,7 @@ class Management(BaseController):
     Controller class for managing user data and functionalities.
 
     Attributes:
-        db_session (Any): The database session.
+        db_session (scoped_session): The database session.
         service (ManagementService): An instance of the ManagementService.
 
     Methods:
@@ -84,7 +84,7 @@ class Management(BaseController):
         """
         )
 
-        result = self.service.show_player_list(handler, "Management", "player_details")
+        result = self.service.show_player_list(handler, Management, "player_details")
 
         return HandlerResponse(dynamic_menu_items=result)
 
@@ -126,7 +126,7 @@ class Management(BaseController):
         """
         )
 
-        result = self.service.show_player_list(handler, "Management", "player_delete_confirmation")
+        result = self.service.show_player_list(handler, Management, "player_delete_confirmation")
 
         return HandlerResponse(dynamic_menu_items=result)
 

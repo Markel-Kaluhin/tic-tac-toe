@@ -1,5 +1,7 @@
 from dataclasses import dataclass, field
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Type
+
+from src.components.model import BaseController
 
 
 @dataclass
@@ -31,7 +33,7 @@ class Handler:
     Attributes:
         name (str): Name of the handler.
         parent (Handler): The parent handler associated with this handler.
-        component (str): Name of the component associated with this handler.
+        component (TController): Type of component associated with this handler.
         method (str): Name of the method associated with this handler.
         kwargs (Any): Additional named arguments to pass specific data when calling the next handler.
         id (int): Identifier for the handler.
@@ -47,7 +49,7 @@ class Handler:
 
     name: str = field(repr=True)
     parent: "Handler" = field(init=False, repr=True)
-    component: str = field()
+    component: Type[BaseController] = field()
     method: str = field()
     kwargs: Any = field(default_factory=dict)
 

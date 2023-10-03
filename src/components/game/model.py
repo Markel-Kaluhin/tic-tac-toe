@@ -92,7 +92,7 @@ class GameField:
         """
         return self._field[x_coordinate][y_coordinate]
 
-    def set_cell_value(self, x_coordinate: int, y_coordinate: int, value: str) -> Optional[GameState]:
+    def set_cell_value(self, x_coordinate: int, y_coordinate: int, value: str) -> GameState:
         """
         Registers a custom decision on the game field.
 

@@ -1,11 +1,9 @@
-from typing import Dict, List, Optional, Protocol, TypeVar
+from typing import Dict, List, Optional, Protocol
 
 import click
 
 from src.components.model import BaseController
 from src.handler.model import Handler, HandlerResponse
-
-ConcreteController = TypeVar("ConcreteController", bound=BaseController)
 
 
 class Executor(Protocol):
@@ -40,7 +38,7 @@ class BaseHandler:
     current_handler: Handler
     routes: Handler
 
-    def __init__(self, controllers_registry: List[ConcreteController], routes: Handler) -> None:
+    def __init__(self, controllers_registry: List[BaseController], routes: Handler) -> None:
         """
         Initializes a BaseHandler instance.
 

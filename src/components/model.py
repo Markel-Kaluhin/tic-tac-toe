@@ -1,18 +1,15 @@
-from abc import ABC  # pylint: disable=no-name-in-module
-from typing import List, Optional, Type
-
-from sqlalchemy.orm import scoped_session
+from typing import List, Type
 
 
-class BaseController(ABC):
+class BaseController:
     """
-    An abstract base class for controllers in the application.
+    Base class for controllers in the application.
 
     Attributes:
         __metadata (List): A list to hold metadata of controllers.
 
     Methods:
-        __init_subclass__(cls, db_session=None):
+        __init_subclass__(cls):
             Adds the subclass to the metadata list and sets the database session.
         metadata(self):
             Gets the metadata list containing subclasses.
@@ -20,20 +17,15 @@ class BaseController(ABC):
     """
 
     __metadata: List = []
-    db_session: Optional[scoped_session] = None
 
-    def __init_subclass__(cls, db_session: Optional[scoped_session] = None) -> None:
+    def __init_subclass__(cls) -> None:
         """
         Adds the subclass to the metadata list and sets the database session.
-
-        Args:
-            db_session (Any): The database session.
 
         Returns:
             None
 
         """
-        cls.db_session = db_session
         cls.__metadata.append(cls)
 
     @property
