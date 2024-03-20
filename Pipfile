@@ -5,7 +5,7 @@ name = "pypi"
 
 [dev-packages]
 alembic = "==1.12.0"
-black = "==23.9.1"
+black = "==24.3.0"
 coverage = "==7.3.1"
 flake8 = "==6.1.0"
 isort = "==5.12.0"
